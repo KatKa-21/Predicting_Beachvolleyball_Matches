@@ -11,11 +11,8 @@ import os
 import plotly.express as px
 from plotly.subplots import make_subplots
 from plotly import graph_objects as go
-#Pfad festlegen
-os.chdir('C:/Users/Katharina/Desktop/Weiterbildung/Bootcamp/Bootcamp/Final_project/streamlit_parts')
 
 
-# Setze den gewünschten Seitentitel, das Icon und Layout (optional)
 st.set_page_config(
     page_title="Prediction of Spike Faults of one team",  # Hier stellst du den angezeigten Namen ein
     #page_icon=":smile:",                # Optional: Icon der Seite
@@ -52,10 +49,7 @@ df_Reg_ohneW = pd.read_csv('ML_SpikeFault_OHNEWetter.csv', sep=';')
 #Modelle implementieren
 
 model_choice = st.sidebar.selectbox('Choose the model', ['Spike-Fault with weather impact (Random Forest)', 'Spike-Fault with weather impact (Gradient Boosting)',
-                                                        'Spike-Fault without weather impact (Random Forest)', 'Spike-Fault without weather impact (Gradient Boosting)',
-                                                        #'Total-Spikes with weather impact (Random Forest)','Total-Spikes with weather impact (Gradient Boosting)',
-                                                        #'Total-Spikes without weather impact (Random Forest)','Total-Spikes without weather impact (Gradient Boosting)'
-                                                        ])
+                                                        'Spike-Fault without weather impact (Random Forest)', 'Spike-Fault without weather impact (Gradient Boosting)'])
 
 #Lade das Model und die relevanten Daten
 if model_choice ==  'Spike-Fault with weather impact (Random Forest)':

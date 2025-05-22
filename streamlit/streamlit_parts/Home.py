@@ -18,11 +18,6 @@ from PIL import Image
 from io import BytesIO
 
 
-#Pfad festlegen
-os.chdir('C:/Users/Katharina/Desktop/Weiterbildung/Bootcamp/Bootcamp/Final_project/streamlit_parts')
-
-
-
 #--------------------------------------------------------------------------------------------------------------------------
 # Title
 st.title("🏐 Welcome to the Beach Volleyball Machine Learning Experience!")

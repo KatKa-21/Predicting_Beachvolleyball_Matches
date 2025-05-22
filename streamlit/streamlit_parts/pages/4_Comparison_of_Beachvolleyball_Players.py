@@ -135,5 +135,4 @@ The values represent the **average** of all played games by the selected players
 This gives you a clearer overview of their overall performance and consistency across various matches.
 """)
 
-# Placeholder for the plots (to be generated later)
-# Your code to generate plots goes here...
+

@@ -10,18 +10,16 @@ import seaborn as sns
 import altair as alt
 import plotly.express as px
 
-os.chdir('C:/Users/Katharina/Desktop/Weiterbildung/Bootcamp/Bootcamp/Final_project/streamlit_parts')
+
 df = pd.read_csv("TeamStatistik1.csv", sep=';')
 
 # Setze den gewünschten Seitentitel, das Icon und Layout (optional)
 st.set_page_config(
-    page_title="Comparison of Beachvolleyball-Teams",  # Hier stellst du den angezeigten Namen ein
-    #page_icon=":smile:",                # Optional: Icon der Seite
+    page_title="Comparison of Beachvolleyball-Teams", 
     layout="centered"
 )
 st.title("🏐 Comparison of Beachvolleyball-Teams")
 
-# Add an introduction for the comparison
 st.markdown("""
 In this section, you can compare the performance of different beach volleyball teams based on their match data.
 
