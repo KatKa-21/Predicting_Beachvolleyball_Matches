@@ -2,7 +2,6 @@
 # data.py
 import os
 import pandas as pd
-os.chdir('C:/Users/Katharina/Desktop/Weiterbildung/Bootcamp/Bootcamp/Final_project/streamlit_parts')
 
 def load_data(path="Playerdata.csv"):
     df = pd.read_csv(path, sep=";")

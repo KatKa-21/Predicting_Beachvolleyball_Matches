@@ -243,28 +243,27 @@ def standardize_names(name_str):
     return "/".join(parts_sorted)
 
 ######################################################################################################################
-# Wende die Funktion auf die Spalte "@Namen" an und speichere das Ergebnis in der neuen Spalte "Standard_Namen"
-BeachTeams1 = test.copy()
+BeachTeams1 = DatS3.copy()
 BeachTeams1["Standard_Namen"] = BeachTeams1["TeamNameFull"].apply(standardize_names)
 
-def reorder_player_numbers(row):
-    """
-    Vergleicht den ursprünglichen Namen (gesplittet in zwei Teile) mit der 
-    alphabetisch sortierten Version. Stimmen sie nicht überein, wird angenommen,
-    dass auch die Player-Daten vertauscht wurden – und es werden die zugehörigen
-    numerischen Werte getauscht.
-    """
-    # Die ursprüngliche Reihenfolge aus der Spalte '@Namen'
-    unsorted_names = [name.strip() for name in row["TeamNameFull"].split('/')]
-    # Berechne die standardisierte (sortierte) Reihenfolge:
-    sorted_names = sorted(unsorted_names, key=lambda x: normalize_string(x).lower())
+# def reorder_player_numbers(row):
+#     """
+#     Vergleicht den ursprünglichen Namen (gesplittet in zwei Teile) mit der 
+#     alphabetisch sortierten Version. Stimmen sie nicht überein, wird angenommen,
+#     dass auch die Player-Daten vertauscht wurden – und es werden die zugehörigen
+#     numerischen Werte getauscht.
+#     """
+#     # Die ursprüngliche Reihenfolge aus der Spalte '@Namen'
+#     unsorted_names = [name.strip() for name in row["TeamNameFull"].split('/')]
+#     # Berechne die standardisierte (sortierte) Reihenfolge:
+#     sorted_names = sorted(unsorted_names, key=lambda x: normalize_string(x).lower())
     
-    # Falls die Reihenfolge nicht gleich ist, tausche die zugehörigen numerischen Spalten:
-    if unsorted_names != sorted_names:
-        row["NoPlayer1_team"], row["NoPlayer2_team"] = row["@NoPlayer2"], row["@NoPlayer1"]
+#     # Falls die Reihenfolge nicht gleich ist, tausche die zugehörigen numerischen Spalten:
+#     if unsorted_names != sorted_names:
+#         row["NoPlayer1_team"], row["NoPlayer2_team"] = row["@NoPlayer2"], row["@NoPlayer1"]
 
-        # Falls weitere Spalten (z.B. playerbezogene Positionen) in diesem Zusammenhang,
-        # können diese ebenfalls getauscht werden.
-    return row
+#         # Falls weitere Spalten (z.B. playerbezogene Positionen) in diesem Zusammenhang,
+#         # können diese ebenfalls getauscht werden.
+#     return row
 
 
