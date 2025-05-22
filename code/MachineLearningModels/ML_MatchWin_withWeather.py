@@ -1,4 +1,4 @@
-# %%
+
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -13,27 +13,18 @@ from sklearn.metrics import accuracy_score
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import cross_validate,StratifiedKFold, cross_val_score, train_test_split
 import os
-from sklearn.preprocessing import StandardScaler, OneHotEncoder, OrdinalEncoder,MinMaxScaler
+from sklearn.preprocessing import StandardScaler, OneHotEncoder,MinMaxScaler
 from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
 from sklearn.impute import SimpleImputer, KNNImputer
-from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, VotingClassifier, StackingClassifier
+from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
 from sklearn.linear_model import LogisticRegression
 
-# %%
-#read data scikit-learn
-os.chdir('C:/Users/Katharina/Desktop/Weiterbildung/Bootcamp/Bootcamp/Final_project/data')
-#data = pd.read_csv('DatenML_V2_relCol.csv', sep=';')
+#---------------------------------------------------------------------------------------------------------------------------
 data = pd.read_csv('DatenML_V2_relCol_ZusatzType.csv', sep=';')
 
-# %%
-data['Type'].unique()
 
-# %%
 df = data
-# Erstellen der neuen Spalte "Team1":
-# Wenn TeamDesignation = A, dann soll TeamAName in Team1 stehen,
-# andernfalls (also bei B) TeamBName.
 df["Team1"] = np.where(
     df["TeamDesignation"].str.upper() == "A",
     df["@TeamAName"],
@@ -47,13 +38,14 @@ df["Team2"] = np.where(
     df["@TeamAName"]
 )
 
+#---------------------------------------------------------------------------------------------------------------------------
 
 
-# %%
+
 #Für streamlit abspeichern
 df.to_csv('ML_MatchWin_Weather2.csv', index=False, sep=';')
 
-# %%
+
 #bestimmte Variablen entfernen
 data1 = df.drop([ 'TeamDesignation','@PointsTeamASet1', '@PointsTeamBSet1', '@PointsTeamASet2',
        '@PointsTeamBSet2', '@PointsTeamASet3', '@PointsTeamBSet3', 
@@ -62,15 +54,15 @@ data1 = df.drop([ 'TeamDesignation','@PointsTeamASet1', '@PointsTeamBSet1', '@Po
        #neu
        'Type','TournamentNo','NoPlayer1_team', 'NoPlayer2_team'#'total_A', 'total_B', 'TeamName'-> nicht mehr da
 ], axis=1)
-#'Gender_x',
 
-# %%
+
 y = data1.pop('match_win')
 X = data1.copy()
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=31416)
 
-# %%
+#---------------------------------------------------------------------------------------------------------------------------
+
 special_feature = '@DurationSet3'
 
 # Kopiere die Trainingsdaten, um das Original nicht zu überschreiben
@@ -83,8 +75,9 @@ X_train[special_feature + '_indicator'] = X_train[special_feature].notnull().ast
 X_test = X_test.copy()
 X_test[special_feature + '_indicator'] = X_test[special_feature].notnull().astype(int)
 
+#---------------------------------------------------------------------------------------------------------------------------
 
-# %%
+
 nominal_features = X_train.select_dtypes(include=['object']).columns.tolist()
 numeric_features = X_train.select_dtypes(include=['int64', 'float64']).columns.tolist()
 
@@ -125,33 +118,8 @@ transformers = [
 ]
 
 preprocessor = ColumnTransformer(transformers=transformers)
+#---------------------------------------------------------------------------------------------------------------------------
 
-# %%
-# # select categorical and numerical column names
-# nominal_features = X.select_dtypes(include=['object']).columns.tolist()
-# # Define feature types
-# numeric_features = X.select_dtypes(include=['int64', 'float64']).columns.tolist()
-
-# # Create preprocessors for different feature types
-# numeric_transformer = Pipeline(steps=[
-#     ('imputer', KNNImputer(n_neighbors=5)),
-#     ('scaler', StandardScaler())
-# ])
-
-# nominal_transformer = Pipeline(steps=[
-#     ('imputer', SimpleImputer(strategy='most_frequent')),
-#     ('onehot', OneHotEncoder(handle_unknown='ignore', sparse_output=False))
-# ])
-
-# # Build the column transformer
-# transformers = [
-#     ('num', numeric_transformer, numeric_features),
-#     ('nom', nominal_transformer, nominal_features)
-# ]
-
-# preprocessor = ColumnTransformer(transformers=transformers)
-
-# %%
 #Model Building
 # Define models
 models = {
@@ -164,8 +132,9 @@ models = {
 # Setup cross-validation
 cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
 
+#---------------------------------------------------------------------------------------------------------------------------
 
-# %%
+
 # Function to train and evaluate models
 def evaluate_model(name, model, X, y, cv):
     pipeline = Pipeline(steps=[
@@ -183,7 +152,7 @@ def evaluate_model(name, model, X, y, cv):
     
     return pipeline
 
-# %%
+
 # Evaluate all models
 trained_models = {}
 
@@ -228,10 +197,10 @@ if hasattr(rf_model.named_steps['classifier'], 'feature_importances_'):
     plt.title('Top 20 Feature Importances')
     plt.tight_layout()
 
-# %% [markdown]
-# ## Model abspeichern 
 
-# %%
+#---------------------------------------------------------------------------------------------------------------------------
+
+
 #RandomForestClassifier
 pipeline = Pipeline(steps=[
         ('preprocessor', preprocessor),
@@ -254,18 +223,8 @@ y_train_pred = rf.predict(X_train)
 train_acc = accuracy_score(y_train, y_train_pred)
 print(f"Trainings-Accuracy: {train_acc:.2f}")
 
-# %%
-# Trainieren der Pipeline
-#pipeline.fit(X_train, y_train)
+#---------------------------------------------------------------------------------------------------------------------------
 
-
-
-# %%
-import joblib
-# Modell speichern als .pkl-Datei
-joblib.dump(rf, "random_forest_model_V2_NEU.pkl")
-
-# %%
 #Gradient Boosting
 pipeline2 = Pipeline(steps=[
     ('preprocessor', preprocessor),
@@ -287,25 +246,9 @@ y_train_pred2 = GB.predict(X_train)
 train_acc2 = accuracy_score(y_train, y_train_pred2)
 print(f"Trainings-Accuracy: {train_acc2:.2f}")
 
-
-# %%
-# Trainieren der Pipeline
-#pipeline2.fit(X_train, y_train)
+#---------------------------------------------------------------------------------------------------------------------------
 
 
-
-# %%
-#abspeichern
-joblib.dump(GB, "GradientBoosting_model_V2_NEU.pkl")
-
-
-# %% [markdown]
-# ## neuer part
-
-# %% [markdown]
-# neu
-
-# %%
 from sklearn.model_selection import GridSearchCV
 from sklearn.pipeline import make_pipeline
 from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
@@ -361,14 +304,14 @@ for model_name, result in results.items():
     print(f"Best Parameters: {result['best_params']}")
 
 
-# %%
+
    # Ausgabe der gesamten CV-Ergebnisse für das aktuelle Modell
 # Umwandlung in normale Floats
 scores_normal = {key: float(value) for key, value in scores.items()}
 
 print(scores_normal)
 
-# %%
+
 from sklearn.feature_selection import SelectKBest, mutual_info_classif
 from sklearn.pipeline import Pipeline
 from sklearn.ensemble import RandomForestClassifier
@@ -390,10 +333,6 @@ pipeline.fit(X_train, y_train)
 y_pred = pipeline.predict(X_test)
 
 
-# %% [markdown]
-# ## Code wie im Notebook WBS
-
-# %%
 from sklearn.model_selection import GridSearchCV
 from sklearn.pipeline import make_pipeline
 from sklearn.tree import DecisionTreeClassifier
@@ -414,7 +353,7 @@ def run_grid_search(model, param_grid, cv=5, verbose=1):
 
 
 
-# %%
+
 # Define a dictionary of hyperparameters to tune for the decision tree model
 dt_param_grid = {
     "decisiontreeclassifier__max_depth": range(3, 8),
@@ -430,7 +369,7 @@ dt_search = run_grid_search(
 # Display the process
 dt_search
 
-# %%
+
 from sklearn.model_selection import cross_validate
 from sklearn.metrics import (
     accuracy_score,
@@ -473,13 +412,13 @@ def track_model_scores(model_scores_df, scores):
     return model_scores_df
 
 
-# %%
+
 model_scores_df = track_model_scores(model_scores_df, dt_scores)
 
 # # Display the DataFrame
 model_scores_df
 
-# %%
+
 from sklearn.neighbors import KNeighborsClassifier
 
 # Define the hyperparameter grid to be searched by the grid search
@@ -497,7 +436,7 @@ knn_search = run_grid_search(
 # Display the grid search results
 knn_search
 
-# %%
+
 # Evaluate the K-Nearest Neighbours (KNN) model using the testing dataset and obtain performance metrics
 knn_scores = evaluate_model(knn_search, "KNN")
 
@@ -507,7 +446,8 @@ model_scores_df = track_model_scores(model_scores_df, knn_scores)
 # Display the updated DataFrame containing all model performance metrics
 model_scores_df
 
-# %%
+#---------------------------------------------------------------------------------------------------------------------------
+
 
 # Define the hyperparameter grid to be searched by the grid search
 rf_param_grid = {
@@ -526,15 +466,10 @@ rf_search = run_grid_search(
 # Display the grid search results
 rf_search
 
-# %%
+
 # Evaluierung auf dem besten Modell aus GridSearchCV
 rf_best_model = rf_search.best_estimator_  # Extrahiert das Modell mit den besten Parametern
 rf_scores = evaluate_model(rf_best_model, "RandomForest")
-
-
-# %%
-# Evaluate the K-Nearest Neighbours (KNN) model using the testing dataset and obtain performance metrics
-rf_scores = evaluate_model(rf_search, "RandomForest")
 
 # Append the KNN metrics as a new row to the existing DataFrame of model scores
 model_scores_df = track_model_scores(model_scores_df, rf_scores)
@@ -542,7 +477,8 @@ model_scores_df = track_model_scores(model_scores_df, rf_scores)
 # Display the updated DataFrame containing all model performance metrics
 model_scores_df
 
-# %%
+#---------------------------------------------------------------------------------------------------------------------------
+
 from sklearn.ensemble import GradientBoostingClassifier
 
 gb_param_grid = {
@@ -559,7 +495,7 @@ gb_search = run_grid_search(
     gb_param_grid,
 )
 
-# %%
+
 # Evaluate the K-Nearest Neighbours (KNN) model using the testing dataset and obtain performance metrics
 gb_scores = evaluate_model(rf_search, "Gradient Boosting")
 
